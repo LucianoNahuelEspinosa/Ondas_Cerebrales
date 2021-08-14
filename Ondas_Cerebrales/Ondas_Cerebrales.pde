@@ -6,10 +6,21 @@ String serialPort = "COM4"; //Puerto Saliente
 
 int atencion, meditacion;
 int delta, theta, lowAlpha, highAlpha, lowBeta, highBeta, lowGamma, midGamma;
+float xItems = 50;
+float yItems = 50;
+String estadoMind = "";
 
 void setup() {
-  size(800, 600);
-  mindSet = new MindSet(this, serialPort);
+  size(1024, 600);
+
+  try {
+    mindSet = new MindSet(this, serialPort);
+    estadoMind = "Conectado";
+  } 
+  catch (Exception e) {
+    println(e);
+    estadoMind = "Error al conectar";
+  }
 }
 
 void draw() {
@@ -18,16 +29,17 @@ void draw() {
   pushStyle();
   textSize(20);
   fill(0);
-  text("Nivel de Atencion: " + atencion, 50, 50);
-  text("Nivel de Meditacion: " + meditacion, 50, 100);
-  text("Delta: " + delta, 50, 150);
-  text("Theta: " + theta, 50, 200);
-  text("Low Alpha: " + lowAlpha, 50, 250);
-  text("High Alpha: " + highAlpha, 50, 300);
-  text("Low Beta: " + lowBeta, 50, 350);
-  text("High Beta: " + highBeta, 50, 400);
-  text("Low Gamma: " + lowGamma, 50, 450);
-  text("Mid Gamma: " + midGamma, 50, 500);
+  text("Estado conexión: " + estadoMind, xItems, yItems);
+  text("Nivel de Atencion: " + atencion, xItems, yItems + 50);
+  text("Nivel de Meditacion: " + meditacion, xItems, yItems + 100);
+  text("Delta: " + delta, xItems, yItems + 150);
+  text("Theta: " + theta, xItems, yItems + 200);
+  text("Low Alpha: " + lowAlpha, xItems, yItems + 250);
+  text("High Alpha: " + highAlpha, xItems, yItems + 300);
+  text("Low Beta: " + lowBeta, xItems, yItems + 350);
+  text("High Beta: " + highBeta, xItems, yItems + 400);
+  text("Low Gamma: " + lowGamma, xItems, yItems + 450);
+  text("Mid Gamma: " + midGamma, xItems, yItems + 500);
   popStyle();
 }
 
