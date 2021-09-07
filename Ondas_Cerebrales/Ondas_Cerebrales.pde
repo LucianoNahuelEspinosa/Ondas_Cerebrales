@@ -4,15 +4,15 @@ import processing.serial.*;
 import pt.citar.diablu.processing.mindset.*;
 
 MindSet mindSet;
-String serialPort = "COM4"; //Puerto Saliente
+String serialPort = "COM3"; //Puerto Saliente
 
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 int sendPort = 7000; //Puerto para enviar informacion
 String oscIP = "127.0.0.1"; //Direccion IP de conexion osc
 
-int atencion, meditacion;
-int delta, theta, lowAlpha, highAlpha, lowBeta, highBeta, lowGamma, midGamma;
+float atencion, meditacion;
+float delta, theta, lowAlpha, highAlpha, lowBeta, highBeta, lowGamma, midGamma;
 float xItems = 50;
 float yItems = 150;
 String estadoMind = "";
