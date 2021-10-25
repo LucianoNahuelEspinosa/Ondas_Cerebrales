@@ -13,14 +13,18 @@ String oscIP = "127.0.0.1"; //Direccion IP de conexion osc
 
 float atencion, meditacion;
 float delta, theta, lowAlpha, highAlpha, lowBeta, highBeta, lowGamma, midGamma;
-float xItems = 50;
+float xItems = 75;
 float yItems = 150;
 String estadoMind = "";
 
 String [] direcciones = {"/mindAtencion", "/mindMeditacion", "/mindDelta", "/mindTheta", "/mindLowAlpha", "/mindHightAplha", "/mindLowBeta", "/mindHighBeta", "/mindLowGamma", "/mindMidGamma"};
 
+PImage background;
+
 void setup() {
-  size(1024, 800);
+  size(1280, 720);
+
+  background = loadImage("Home.png");
 
   try {
     mindSet = new MindSet(this, serialPort);
@@ -36,7 +40,7 @@ void setup() {
 }
 
 void draw() {
-  background(255);
+  background(background);
 
-  infoMind(26, 20, 0);  //infoMind("tamanio titulos", "tamanio texto general", "color de los textos")
+  infoMind(26, 18, 16, 0);  //infoMind("tamaño titulos", "tamaño texto general", tamaño texto direcciones", "color de los textos")
 }

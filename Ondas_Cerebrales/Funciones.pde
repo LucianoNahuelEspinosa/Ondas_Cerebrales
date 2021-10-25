@@ -1,12 +1,10 @@
-void infoMind (int tamTitle, int tamInfo, color colorFill) {
+void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
   pushStyle();
   textSize(tamTitle);
   fill(colorFill);
   textAlign(CENTER);
-  text("MindWave Sensor", width/2-250, 75);
-  text("Conexión OSC", width/2+250, 75);
-
-  line(width/2, 0, width/2, height);
+  text("MindWave Sensor", width/2-250, 80);
+  text("Conexión OSC", width-275, 80);
 
   textAlign(BASELINE);
   textSize(tamInfo);
@@ -62,11 +60,21 @@ void infoMind (int tamTitle, int tamInfo, color colorFill) {
   midGammaMessage.add(midGamma);
   oscP5.send(midGammaMessage, myRemoteLocation);
 
-  text("Dirección IP: " + oscIP, width/2+xItems, yItems);
-  text("Puerto a enviar: " + sendPort, width/2+xItems, yItems+50);
-  text("Direcciones OSC:", width/2+xItems, yItems+125);
-  for ( int i = 0; i<direcciones.length; i++ ) {
-    text((i+1) + ". " + direcciones[i], width/2+xItems, 175+yItems+50*i);
+  text("Dirección IP: " + oscIP, width/2+xItems+75, yItems-10);
+  text("Puerto a enviar: " + sendPort, width/2+xItems+75, yItems-10+50);
+
+  textSize(tamTitle);
+  textAlign(CENTER);
+  text("Direcciones OSC", width-275, yItems+160);
+
+  textAlign(BASELINE);
+  textSize(tamAddresses);
+  for ( int i = 0; i<5; i++ ) {
+    text((i+1) + ". " + direcciones[i], width/2+xItems+75, 225+yItems+60*i);
+  }
+  for ( int i = 5; i<direcciones.length; i++ ) {
+    float m = map(i, 5, 10, 0, 5);
+    text((i+1) + ". " + direcciones[i], width/2+xItems+325, 225+yItems+60*m);
   }
   popStyle();
 }
