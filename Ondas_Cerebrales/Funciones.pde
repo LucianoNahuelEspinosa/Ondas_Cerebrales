@@ -1,3 +1,4 @@
+//======================== UI ==========================
 void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
   pushStyle();
   textSize(tamTitle);
@@ -78,7 +79,26 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
   }
   popStyle();
 }
+//===================================================
 
+//============= Change IP & Port OSC ================
+void ChangeOSCSend() {
+  if (isChangeIpPort) {
+    oscIP = ipText.getText();
+    sendPort = int(portText.getText());
+    myRemoteLocation = new NetAddress(oscIP, sendPort);
+    isChangeIpPort = false;
+  }
+
+  if (!isChangeIpPort && keyPressed) {
+    if (key == ENTER) {
+      isChangeIpPort = true;
+    }
+  }
+}
+//===================================================
+
+//=========== MindWave Functions =============
 public void poorSignalEvent(int sig) {
   //println(sig);
   //signalWidget.add(200-sig);
@@ -108,3 +128,38 @@ public void eegEvent(int delta, int theta, int low_alpha,
   lowGamma = low_gamma%1000;
   midGamma = mid_gamma%1000;
 }
+//=============================================
+
+//=============== GUI Event Functions ===================
+public void displayEvent(String name, GEvent event) {
+  String extra = " event fired at " + millis() / 1000.0 + "s";
+  print(name + "   ");
+  switch(event) {
+  case CHANGED:
+    println("CHANGED " + extra);
+    break;
+  case SELECTION_CHANGED:
+    println("SELECTION_CHANGED " + extra);
+    break;
+  case LOST_FOCUS:
+    println("LOST_FOCUS " + extra);
+    break;
+  case GETS_FOCUS:
+    println("GETS_FOCUS " + extra);
+    break;
+  case ENTERED:
+    println("ENTERED " + extra);  
+    break;
+  default:
+    println("UNKNOWN " + extra);
+  }
+}
+
+public void handleTextEvents(GEditableTextControl textControl, GEvent event) { 
+  displayEvent(textControl.tag, event);
+}
+
+public void handlePasswordEvents(GPassword pwordControl, GEvent event) {
+  displayEvent(pwordControl.tag, event);
+}
+//=======================================================
