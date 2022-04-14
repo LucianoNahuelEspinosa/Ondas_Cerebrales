@@ -9,7 +9,12 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
 
   textAlign(BASELINE);
   textSize(tamInfo);
+  text("Puerto Serial (Saliente): ", xItems, yItems - 35);
+
+  pushStyle();
+  fill(colorsStatus[indexColorsStatus]);
   text("Estado conexión: " + estadoMind, xItems, yItems);
+  popStyle();
 
   text("Nivel de Atencion: " + atencion, xItems, yItems + 50);
   OscMessage atencionMessage = new OscMessage(direcciones[0]);
@@ -61,8 +66,8 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
   midGammaMessage.add(midGamma);
   oscP5.send(midGammaMessage, myRemoteLocation);
 
-  text("Dirección IP: " + oscIP, width/2+xItems+75, yItems-10);
-  text("Puerto a enviar: " + sendPort, width/2+xItems+75, yItems-10+50);
+  text("Dirección IP: ", width/2+xItems+75, yItems-30);
+  text("Puerto a enviar: ", width/2+xItems+75, yItems-30+50);
 
   textSize(tamTitle);
   textAlign(CENTER);
@@ -78,25 +83,75 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
     text((i+1) + ". " + direcciones[i], width/2+xItems+325, 225+yItems+60*m);
   }
   popStyle();
+
+  if (oscIP != ipText.getText() || sendPort != int(portText.getText())) {
+    image(alert, width/2-alert.width/2, 10);
+  }
+
+  if (isAlertPort) {
+    image(alertPort, width/2-alertPort.width/2, height/2-alertPort.height/2);
+  }
 }
 //===================================================
+
+//============= Setup GUI ================
+void InitGUI() {
+  ipText = new GTextField(this, width/2+xItems+175, yItems-45, 80, 20);
+  ipText.tag = "IpAddress";
+  ipText.setPromptText("Direccion IP");
+  ipText.setText(oscIP);
+
+  portText = new GTextField(this, width/2+xItems+200, yItems-30+35, 80, 20);
+  portText.tag = "portNumber";
+  portText.setPromptText("Puerto");
+  portText.setText(str(sendPort));
+
+  serialPortText = new GTextField(this, xItems+180, yItems-50, 200, 20);
+  serialPortText.tag = "serialPort";
+  serialPortText.setPromptText("Puerto Serial");
+  serialPortText.setText(serialPort);
+
+  serialPortBtn = new GImageButton(this, xItems+400, yItems-60, 150, 50, imgsSerialPortButton);
+}
+//=========================================
 
 //============= Change IP & Port OSC ================
 void ChangeOSCSend() {
   if (isChangeIpPort) {
     oscIP = ipText.getText();
     sendPort = int(portText.getText());
-    myRemoteLocation = new NetAddress(oscIP, sendPort);
+
+    if (sendPort <= 65535) {
+      myRemoteLocation = new NetAddress(oscIP, sendPort);
+    } else {
+      isAlertPort = true;
+    }
+
     isChangeIpPort = false;
   }
 
   if (!isChangeIpPort && keyPressed) {
     if (key == ENTER) {
       isChangeIpPort = true;
+      isAlertPort = false;
     }
   }
 }
 //===================================================
+
+//============= Connection Status ================
+void CheckStatusConnection() {
+  if (estadoMind == "Desconectado") {
+    indexColorsStatus = 0;
+  } else if (estadoMind == "Conectado") {
+    indexColorsStatus = 2;
+  } else if (estadoMind == "Conectando...") {
+    indexColorsStatus = 3;
+  } else {
+    indexColorsStatus = 1;
+  }
+}
+//================================================
 
 //=========== MindWave Functions =============
 public void poorSignalEvent(int sig) {
@@ -159,7 +214,18 @@ public void handleTextEvents(GEditableTextControl textControl, GEvent event) {
   displayEvent(textControl.tag, event);
 }
 
-public void handlePasswordEvents(GPassword pwordControl, GEvent event) {
-  displayEvent(pwordControl.tag, event);
+void handleButtonEvents(GImageButton button, GEvent event) {
+  if (button == serialPortBtn && event == GEvent.CLICKED) {
+    serialPort = serialPortText.getText();
+    estadoMind = "Conectando...";
+
+    try {
+      mindSet = new MindSet(this, serialPort);
+      estadoMind = "Conectado";
+    } 
+    catch (Exception e) {
+      estadoMind = "Error al conectar";
+    }
+  }
 }
 //=======================================================
