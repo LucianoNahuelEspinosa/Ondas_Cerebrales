@@ -15,10 +15,11 @@ String oscIP = "127.0.0.1"; //Direccion IP de conexion osc
 GTextField portText, ipText, serialPortText;
 GImageButton serialPortBtn;
 String[] imgsSerialPortButton = {"SerialPortButton_Idle.png", "SerialPortButton_Hover.png", "SerialPortButton_Pressed.png"};
-boolean isChangeIpPort;
+boolean isChangeIpPort, isInitGUI;
 
 float atencion, meditacion;
 float delta, theta, lowAlpha, highAlpha, lowBeta, highBeta, lowGamma, midGamma;
+float deltaA, thetaA, lowAlphaA, highAlphaA, lowBetaA, highBetaA, lowGammaA, midGammaA;
 float xItems = 75;
 float yItems = 160;
 String estadoMind = "Desconectado";
@@ -29,22 +30,39 @@ boolean isAlertPort;
 
 String [] direcciones = {"/mindAtencion", "/mindMeditacion", "/mindDelta", "/mindTheta", "/mindLowAlpha", "/mindHighAlpha", "/mindLowBeta", "/mindHighBeta", "/mindLowGamma", "/mindMidGamma"};
 
-PImage background;
+PImage background, splash;
+boolean isAppInit;
+
+JSONObject json;
 
 void setup() {
   size(1280, 720);
   background = loadImage("Home.png");
   alert = loadImage("Alert.png");
   alertPort = loadImage("AlertPort.png");
-  oscP5 = new OscP5(this, 6969);
+  splash = loadImage("Splash.png");
+
+  json = loadJSONObject("data.json");
+  serialPort = json.getString("portSerial");
+  oscIP = json.getString("ipOSC");
+  sendPort = json.getInt("portOSC");
+
+  oscP5 = new OscP5(this, 1);
   myRemoteLocation = new NetAddress(oscIP, sendPort);
-  InitGUI();
 }
 
 void draw() {
   background(background);
 
-  infoMind(24, 16, 14, 0);  //infoMind("tamaño titulos", "tamaño texto general", tamaño texto direcciones", "color de los textos")
-  CheckStatusConnection();
-  ChangeOSCSend();
+  if (isAppInit) {
+    if (!isInitGUI) {
+      InitGUI();
+    }
+
+    infoMind(24, 16, 14, 0);  //infoMind("tamaño titulos", "tamaño texto general", tamaño texto direcciones", "color de los textos")
+    CheckStatusConnection();
+    ChangeOSCSend();
+  } else {
+    Splash();
+  }
 }

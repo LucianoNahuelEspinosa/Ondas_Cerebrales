@@ -1,3 +1,13 @@
+//================ Splash ================
+void Splash() {
+  image(splash, 0, 0);
+
+  if (frameCount % 180 == 0) {
+    isAppInit = true;
+  }
+}
+//========================================
+
 //======================== UI ==========================
 void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
   pushStyle();
@@ -111,7 +121,9 @@ void InitGUI() {
   serialPortText.setPromptText("Puerto Serial");
   serialPortText.setText(serialPort);
 
-  serialPortBtn = new GImageButton(this, xItems+400, yItems-60, 150, 50, imgsSerialPortButton);
+  serialPortBtn = new GImageButton(this, xItems+400, yItems-65, 135, 50, imgsSerialPortButton);
+
+  isInitGUI = true;
 }
 //=========================================
 
@@ -121,11 +133,16 @@ void ChangeOSCSend() {
     oscIP = ipText.getText();
     sendPort = int(portText.getText());
 
-    if (sendPort <= 65535) {
+    if (sendPort > 1 && sendPort <= 65535) {
       myRemoteLocation = new NetAddress(oscIP, sendPort);
     } else {
       isAlertPort = true;
     }
+
+    json.setString("portSerial", serialPort);
+    json.setString("ipOSC", oscIP);
+    json.setInt("portOSC", sendPort);
+    saveJSONObject(json, "data/data.json");
 
     isChangeIpPort = false;
   }
@@ -141,6 +158,15 @@ void ChangeOSCSend() {
 
 //============= Connection Status ================
 void CheckStatusConnection() {
+  deltaA = delta;
+  thetaA = theta;
+  lowAlphaA = lowAlpha;
+  highAlphaA = highAlpha;
+  lowBetaA = lowBeta;
+  highBetaA = highBeta;
+  lowGammaA = lowGamma;
+  midGammaA = midGamma;
+
   if (estadoMind == "Desconectado") {
     indexColorsStatus = 0;
   } else if (estadoMind == "Conectado") {
@@ -149,6 +175,12 @@ void CheckStatusConnection() {
     indexColorsStatus = 3;
   } else {
     indexColorsStatus = 1;
+  }
+
+  if (atencion == 0 && meditacion == 0 && delta == deltaA && theta == thetaA && lowAlpha == lowAlphaA && highAlpha == highAlphaA && lowBeta == lowBetaA && highBeta == highBetaA && lowGamma == lowGammaA && midGamma == midGammaA && estadoMind == "Conectado") {
+    if (frameCount % 600 == 0) {
+      estadoMind = "Desconectado";
+    }
   }
 }
 //================================================
