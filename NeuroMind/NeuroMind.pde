@@ -1,3 +1,10 @@
+/*
+
+ NeuroMind by Luciano Nahuel Espinosa - 2022
+ https://lucianoespinosa-7954e.firebaseapp.com
+ 
+ */
+
 import g4p_controls.*;
 import netP5.*;
 import oscP5.*;
@@ -37,6 +44,9 @@ JSONObject json;
 
 void setup() {
   size(1280, 720);
+  surface.setTitle("NeuroMind");
+  surface.setIcon(loadImage("Icon.png"));
+
   background = loadImage("Home.png");
   alert = loadImage("Alert.png");
   alertPort = loadImage("AlertPort.png");
