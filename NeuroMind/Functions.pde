@@ -26,55 +26,34 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
   text("Estado conexión: " + estadoMind, xItems, yItems);
   popStyle();
 
-  text("Nivel de Atencion: " + atencion, xItems, yItems + 50);
-  OscMessage atencionMessage = new OscMessage(direcciones[0]);
-  atencionMessage.add(atencion);
-  oscP5.send(atencionMessage, myRemoteLocation);
+  for (int i = 0; i<direcciones.length; i++) {
+    for (int j = 0; j<mindWaveFrequencies.length; j++) {
+      OSCMessages[i] = new OscMessage(direcciones[i]);
 
-  text("Nivel de Meditacion: " + meditacion, xItems, yItems + 100);
-  OscMessage meditacionMessage = new OscMessage(direcciones[1]);
-  meditacionMessage.add(meditacion);
-  oscP5.send(meditacionMessage, myRemoteLocation);
+      if (i == 0) {
+        OSCMessages[i].add(attention);
+      } else if (i == 1) {
+        OSCMessages[i].add(meditation);
+      } else {
+        OSCMessages[i].add(mindWaveFrequencies[j]);
+      }
 
-  text("Delta: " + delta, xItems, yItems + 150);
-  OscMessage deltaMessage = new OscMessage(direcciones[2]);
-  deltaMessage.add(delta);
-  oscP5.send(deltaMessage, myRemoteLocation);
+      oscP5.send(OSCMessages[i], myRemoteLocation);
+    }
+  }
 
-  text("Theta: " + theta, xItems, yItems + 200);
-  OscMessage thetaMessage = new OscMessage(direcciones[3]);
-  thetaMessage.add(theta);
-  oscP5.send(thetaMessage, myRemoteLocation);
+  text("Nivel de Atencion: " + attention, xItems, yItems + 50);
 
-  text("Low Alpha: " + lowAlpha, xItems, yItems + 250);
-  OscMessage lowAlphaMessage = new OscMessage(direcciones[4]);
-  lowAlphaMessage.add(lowAlpha);
-  oscP5.send(lowAlphaMessage, myRemoteLocation);
-
-  text("High Alpha: " + highAlpha, xItems, yItems + 300);
-  OscMessage highAlphaMessage = new OscMessage(direcciones[5]);
-  highAlphaMessage.add(highAlpha);
-  oscP5.send(highAlphaMessage, myRemoteLocation);
-
-  text("Low Beta: " + lowBeta, xItems, yItems + 350);
-  OscMessage lowBetaMessage = new OscMessage(direcciones[6]);
-  lowBetaMessage.add(lowBeta);
-  oscP5.send(lowBetaMessage, myRemoteLocation);
-
-  text("High Beta: " + highBeta, xItems, yItems + 400);
-  OscMessage highBetaMessage = new OscMessage(direcciones[7]);
-  highBetaMessage.add(highBeta);
-  oscP5.send(highBetaMessage, myRemoteLocation);
-
-  text("Low Gamma: " + lowGamma, xItems, yItems + 450);
-  OscMessage lowGammaMessage = new OscMessage(direcciones[8]);
-  lowGammaMessage.add(lowGamma);
-  oscP5.send(lowGammaMessage, myRemoteLocation);
-
-  text("Mid Gamma: " + midGamma, xItems, yItems + 500);
-  OscMessage midGammaMessage = new OscMessage(direcciones[9]);
-  midGammaMessage.add(midGamma);
-  oscP5.send(midGammaMessage, myRemoteLocation);
+  text("Nivel de Meditacion: " + meditation, xItems, yItems + 100);
+  
+  text("Delta: " + mindWaveFrequencies[0], xItems, yItems + 150);
+  text("Theta: " + mindWaveFrequencies[1], xItems, yItems + 200);
+  text("Low Alpha: " + mindWaveFrequencies[2], xItems, yItems + 250);
+  text("High Alpha: " + mindWaveFrequencies[3], xItems, yItems + 300);
+  text("Low Beta: " + mindWaveFrequencies[4], xItems, yItems + 350);
+  text("High Beta: " + mindWaveFrequencies[5], xItems, yItems + 400);
+  text("Low Gamma: " + mindWaveFrequencies[6], xItems, yItems + 450);
+  text("Mid Gamma: " + mindWaveFrequencies[7], xItems, yItems + 500);
 
   text("Dirección IP: ", width/2+xItems+75, yItems-30);
   text("Puerto a enviar: ", width/2+xItems+75, yItems-30+50);
@@ -158,15 +137,6 @@ void ChangeOSCSend() {
 
 //============= Connection Status ================
 void CheckStatusConnection() {
-  deltaA = delta;
-  thetaA = theta;
-  lowAlphaA = lowAlpha;
-  highAlphaA = highAlpha;
-  lowBetaA = lowBeta;
-  highBetaA = highBeta;
-  lowGammaA = lowGamma;
-  midGammaA = midGamma;
-
   if (estadoMind == "Desconectado") {
     indexColorsStatus = 0;
   } else if (estadoMind == "Conectado") {
@@ -177,9 +147,17 @@ void CheckStatusConnection() {
     indexColorsStatus = 1;
   }
 
-  if (atencion == 0 && meditacion == 0 && delta == deltaA && theta == thetaA && lowAlpha == lowAlphaA && highAlpha == highAlphaA && lowBeta == lowBetaA && highBeta == highBetaA && lowGamma == lowGammaA && midGamma == midGammaA && estadoMind == "Conectado") {
-    if (frameCount % 600 == 0) {
-      estadoMind = "Desconectado";
+  for (int i = 0; i<mindWaveFrequencies.length; i++) {
+    if (mindWaveFrequencies[i] != mindWaveFrequenciesBefore[i]) {
+      if (frameCount % 60 == 0) {
+        mindWaveFrequenciesBefore[i] = mindWaveFrequencies[i];
+      }
+    }
+
+    if (attention == 0 && meditation == 0 && mindWaveFrequencies[i] ==  mindWaveFrequenciesBefore[i] && estadoMind == "Conectado") {
+      if (frameCount % 600 == 0) {
+        estadoMind = "Desconectado";
+      }
     }
   }
 }
@@ -194,26 +172,26 @@ public void poorSignalEvent(int sig) {
 public void attentionEvent(int attentionLevel) {
   //attentionWidget.add(attentionLevel);
   //println("Nivel de Atencion: " + attentionLevel);
-  atencion = attentionLevel;
+  attention = attentionLevel;
 }
 
 
 public void meditationEvent(int meditationLevel) {
   //meditationWidget.add(meditationLevel);
   //println("Nivel de Meditacion: " + meditationLevel);
-  meditacion = meditationLevel;
+  meditation = meditationLevel;
 }
 
 public void eegEvent(int delta, int theta, int low_alpha, 
   int high_alpha, int low_beta, int high_beta, int low_gamma, int mid_gamma) {
-  this.delta = delta%1000;
-  this.theta = theta%1000;
-  lowAlpha = low_alpha%1000;
-  highAlpha = high_alpha%1000;
-  lowBeta = low_beta%1000;
-  highBeta = high_beta%1000;
-  lowGamma = low_gamma%1000;
-  midGamma = mid_gamma%1000;
+  mindWaveFrequencies[0] = delta%1000;
+  mindWaveFrequencies[1] = theta%1000;
+  mindWaveFrequencies[2] = low_alpha%1000;
+  mindWaveFrequencies[3] = high_alpha%1000;
+  mindWaveFrequencies[4] = low_beta%1000;
+  mindWaveFrequencies[5] = high_beta%1000;
+  mindWaveFrequencies[6] = low_gamma%1000;
+  mindWaveFrequencies[7] = mid_gamma%1000;
 }
 //=============================================
 

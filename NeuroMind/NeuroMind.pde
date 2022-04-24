@@ -24,11 +24,12 @@ GImageButton serialPortBtn;
 String[] imgsSerialPortButton = {"SerialPortButton_Idle.png", "SerialPortButton_Hover.png", "SerialPortButton_Pressed.png"};
 boolean isChangeIpPort, isInitGUI;
 
-float atencion, meditacion;
-float delta, theta, lowAlpha, highAlpha, lowBeta, highBeta, lowGamma, midGamma;
-float deltaA, thetaA, lowAlphaA, highAlphaA, lowBetaA, highBetaA, lowGammaA, midGammaA;
+float attention, meditation;
+float[] mindWaveFrequencies = new float[8];
+float[] mindWaveFrequenciesBefore = new float[8];
 float xItems = 75;
 float yItems = 160;
+OscMessage[] OSCMessages = new OscMessage[10];
 String estadoMind = "Desconectado";
 color[] colorsStatus = {color(150), color(255, 0, 0), color(0, 255, 0), color(50)};
 int indexColorsStatus;
