@@ -34,7 +34,7 @@ String estadoMind = "Desconectado";
 color[] colorsStatus = {color(150), color(255, 0, 0), color(0, 255, 0), color(50)};
 int indexColorsStatus;
 PImage alert, alertPort;
-boolean isAlertPort;
+boolean isAlertPort, isTryGetConnection;
 
 String [] direcciones = {"/mindAtencion", "/mindMeditacion", "/mindDelta", "/mindTheta", "/mindLowAlpha", "/mindHighAlpha", "/mindLowBeta", "/mindHighBeta", "/mindLowGamma", "/mindMidGamma"};
 
@@ -71,6 +71,7 @@ void draw() {
     }
 
     infoMind(24, 16, 14, 0);  //infoMind("tamaño titulos", "tamaño texto general", tamaño texto direcciones", "color de los textos")
+    GetConnection();
     CheckStatusConnection();
     ChangeOSCSend();
   } else {

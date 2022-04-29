@@ -45,7 +45,7 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
   text("Nivel de Atencion: " + attention, xItems, yItems + 50);
 
   text("Nivel de Meditacion: " + meditation, xItems, yItems + 100);
-  
+
   text("Delta: " + mindWaveFrequencies[0], xItems, yItems + 150);
   text("Theta: " + mindWaveFrequencies[1], xItems, yItems + 200);
   text("Low Alpha: " + mindWaveFrequencies[2], xItems, yItems + 250);
@@ -134,6 +134,22 @@ void ChangeOSCSend() {
   }
 }
 //===================================================
+
+//=========== Get Connection of the Sensor ===========
+void GetConnection() {
+  if (isTryGetConnection && frameCount % 120 == 0) {
+    try {
+      mindSet = new MindSet(this, serialPort);
+      estadoMind = "Conectado";
+    } 
+    catch (Exception e) {
+      estadoMind = "Error al conectar";
+    }
+
+    isTryGetConnection = false;
+  }
+}
+//================================================
 
 //============= Connection Status ================
 void CheckStatusConnection() {
@@ -228,14 +244,7 @@ void handleButtonEvents(GImageButton button, GEvent event) {
   if (button == serialPortBtn && event == GEvent.CLICKED) {
     serialPort = serialPortText.getText();
     estadoMind = "Conectando...";
-
-    try {
-      mindSet = new MindSet(this, serialPort);
-      estadoMind = "Conectado";
-    } 
-    catch (Exception e) {
-      estadoMind = "Error al conectar";
-    }
+    isTryGetConnection = true;
   }
 }
 //=======================================================
