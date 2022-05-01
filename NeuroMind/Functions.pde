@@ -65,11 +65,11 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, color colorFill) {
   textAlign(BASELINE);
   textSize(tamAddresses);
   for ( int i = 0; i<5; i++ ) {
-    text((i+1) + ". " + direcciones[i], width/2+xItems+75, 225+yItems+60*i);
+    text((i+1) + ". " + direcciones[i], width/2+xItems+100, 225+yItems+60*i);
   }
   for ( int i = 5; i<direcciones.length; i++ ) {
     float m = map(i, 5, 10, 0, 5);
-    text((i+1) + ". " + direcciones[i], width/2+xItems+325, 225+yItems+60*m);
+    text((i+1) + ". " + direcciones[i], width/2+xItems+340, 225+yItems+60*m);
   }
   popStyle();
 
@@ -90,7 +90,7 @@ void InitGUI() {
   ipText.setPromptText("Direccion IP");
   ipText.setText(oscIP);
 
-  portText = new GTextField(this, width/2+xItems+200, yItems-30+35, 80, 20);
+  portText = new GTextField(this, width/2+xItems+200, yItems-30+35, 50, 20);
   portText.tag = "portNumber";
   portText.setPromptText("Puerto");
   portText.setText(str(sendPort));
@@ -140,6 +140,7 @@ void GetConnection() {
   if (isTryGetConnection && frameCount % 120 == 0) {
     try {
       mindSet = new MindSet(this, serialPort);
+      changeStatus = false;
       estadoMind = "Conectado";
     } 
     catch (Exception e) {
@@ -164,15 +165,23 @@ void CheckStatusConnection() {
   }
 
   for (int i = 0; i<mindWaveFrequencies.length; i++) {
-    if (mindWaveFrequencies[i] != mindWaveFrequenciesBefore[i]) {
-      if (frameCount % 60 == 0) {
+    if (mindWaveFrequencies[i] != mindWaveFrequenciesBefore[i] && (attention != attenBefore || attention == 0) && (meditation != mediBefore || meditation == 0)) {
+      if (frameCount % 120 == 0) {
+        attenBefore = attention;
+        mediBefore = meditation;
         mindWaveFrequenciesBefore[i] = mindWaveFrequencies[i];
+        changeStatus = false;
+      }
+    } else {
+      if (frameCount % 120 == 0) {
+        changeStatus = true;
       }
     }
 
-    if (attention == 0 && meditation == 0 && mindWaveFrequencies[i] ==  mindWaveFrequenciesBefore[i] && estadoMind == "Conectado") {
-      if (frameCount % 600 == 0) {
+    if (changeStatus && estadoMind == "Conectado") {
+      if (frameCount % 600 == 0 && attention == attenBefore && meditation == mediBefore && mindWaveFrequencies[i] ==  mindWaveFrequenciesBefore[i]) {
         estadoMind = "Desconectado";
+        mindSet.quit();
       }
     }
   }

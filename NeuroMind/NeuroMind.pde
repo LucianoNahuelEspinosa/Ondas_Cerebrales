@@ -3,6 +3,8 @@
  NeuroMind by Luciano Nahuel Espinosa - 2022
  https://lucianoespinosa-7954e.firebaseapp.com
  
+ Version: 0.9
+ 
  */
 
 import g4p_controls.*;
@@ -25,6 +27,7 @@ String[] imgsSerialPortButton = {"SerialPortButton_Idle.png", "SerialPortButton_
 boolean isChangeIpPort, isInitGUI;
 
 float attention, meditation;
+float attenBefore, mediBefore;
 float[] mindWaveFrequencies = new float[8];
 float[] mindWaveFrequenciesBefore = new float[8];
 float xItems = 75;
@@ -34,7 +37,7 @@ String estadoMind = "Desconectado";
 color[] colorsStatus = {color(150), color(255, 0, 0), color(0, 255, 0), color(50)};
 int indexColorsStatus;
 PImage alert, alertPort;
-boolean isAlertPort, isTryGetConnection;
+boolean isAlertPort, isTryGetConnection, changeStatus;
 
 String [] direcciones = {"/mindAtencion", "/mindMeditacion", "/mindDelta", "/mindTheta", "/mindLowAlpha", "/mindHighAlpha", "/mindLowBeta", "/mindHighBeta", "/mindLowGamma", "/mindMidGamma"};
 
