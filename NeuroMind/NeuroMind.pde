@@ -3,7 +3,7 @@
  NeuroMind by Luciano Nahuel Espinosa - 2022
  https://lucianoespinosa-7954e.firebaseapp.com
  
- Version: 0.9
+ Version: 1.0
  
  */
 
@@ -34,7 +34,7 @@ float xItems = 75;
 float yItems = 160;
 OscMessage[] OSCMessages = new OscMessage[10];
 String estadoMind = "Desconectado";
-color[] colorsStatus = {color(150), color(255, 0, 0), color(0, 255, 0), color(50)};
+color[] colorsStatus = {color(150), color(255, 0, 0), color(0, 200, 0), color(50)};
 int indexColorsStatus;
 PImage alert, alertPort;
 boolean isAlertPort, isTryGetConnection, changeStatus;
