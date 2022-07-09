@@ -3,7 +3,7 @@
  NeuroMind by Luciano Nahuel Espinosa - 2022
  https://lucianoespinosa-7954e.firebaseapp.com
  
- Version: 1.0
+ Version: 1.1
  
  */
 
@@ -14,16 +14,21 @@ import processing.serial.*;
 import pt.citar.diablu.processing.mindset.*;
 
 MindSet mindSet;
-String serialPort = "COM4"; //Puerto Saliente
+String serialPort = ""; //Puerto Saliente
 
 OscP5 oscP5;
-NetAddress myRemoteLocation;
+//NetAddress myRemoteLocation;
+ArrayList<NetAddress> remoteLocations = new ArrayList<NetAddress>();
 int sendPort = 7000; //Puerto para enviar informacion
 String oscIP = "127.0.0.1"; //Direccion IP de conexion osc
 
 GTextField portText, ipText, serialPortText;
-GImageButton serialPortBtn;
+GImageButton serialPortBtn, addOSCBtn, removeOSCBtn, upIndexBtn, downIndexBtn;
 String[] imgsSerialPortButton = {"SerialPortButton_Idle.png", "SerialPortButton_Hover.png", "SerialPortButton_Pressed.png"};
+String[] imgsAddButton = {"ADD.png", "ADD_Hover.png", "ADD_Pressed.png"};
+String[] imgsRemoveButton = {"REMOVE.png", "REMOVE_Hover.png", "REMOVE_Pressed.png"};
+String[] imgsUpButton = {"UP_Index.png", "UP_Index_Hover.png", "UP_Index_Pressed.png"};
+String[] imgsDownButton = {"DOWN_Index.png", "DOWN_Index_Hover.png", "DOWN_Index_Pressed.png"};
 boolean isChangeIpPort, isInitGUI, inFocusInput;
 
 float attention, meditation;
@@ -47,7 +52,8 @@ PImage background, splash;
 boolean isAppInit;
 boolean isSimulation, isChangeStatusSimulation;
 
-JSONObject json;
+JSONArray json;
+int idIndexJSON;
 
 void setup() {
   size(1280, 720);
@@ -60,17 +66,31 @@ void setup() {
   splash = loadImage("Splash.png");
 
   try {
-    json = loadJSONObject("data.json");
-    serialPort = json.getString("portSerial");
-    oscIP = json.getString("ipOSC");
-    sendPort = json.getInt("portOSC");
+    json = loadJSONArray("data.json");
+
+    JSONObject item = json.getJSONObject(0);
+    idIndexJSON = item.getInt("id");
+    serialPort = item.getString("portSerial");
+    oscIP = item.getString("ipOSC");
+    sendPort = item.getInt("portOSC");
+
+    for (int i = 0; i<json.size(); i++) {
+      JSONObject it = json.getJSONObject(i);
+      remoteLocations.add(new NetAddress(it.getString("ipOSC"), it.getInt("portOSC")));
+    }
   } 
   catch (Exception e) {
-    json = new JSONObject();
-    json.setString("portSerial", " ");
-    json.setString("ipOSC", "127.0.0.1");
-    json.setInt("portOSC", 7000);
-    saveJSONObject(json, "data/data.json");
+    json = new JSONArray();
+
+    JSONObject j = new JSONObject();
+    j.setInt("id", 0);
+    j.setString("portSerial", " ");
+    j.setString("ipOSC", "127.0.0.1");
+    j.setInt("portOSC", 7000);
+    json.setJSONObject(0, j);
+    saveJSONArray(json, "data/data.json");
+    
+    remoteLocations.add(new NetAddress("127.0.0.1", 7000));
   }
 
   attentionWidget = new SampleWidget(100, true, 100);
@@ -81,7 +101,6 @@ void setup() {
   }
 
   oscP5 = new OscP5(this, 1);
-  myRemoteLocation = new NetAddress(oscIP, sendPort);
 }
 
 void draw() {
@@ -96,6 +115,7 @@ void draw() {
     GetConnection();
     CheckStatusConnection();
     ChangeOSCSend();
+    OSCButtonsStatus();
     simulate(); //Simulation Sensor's Values
   } else {
     Splash();

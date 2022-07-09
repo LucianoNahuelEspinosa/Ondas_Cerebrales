@@ -38,7 +38,9 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignatio
         OSCMessages[i].add(mindWaveFrequencies[j]);
       }
 
-      oscP5.send(OSCMessages[i], myRemoteLocation);
+      for (NetAddress n : remoteLocations) {
+        oscP5.send(OSCMessages[i], n);
+      }
     }
   }
 
@@ -68,8 +70,16 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignatio
   text("Dirección IP: ", width/2+xItems+75, yItems-30);
   text("Puerto a enviar: ", width/2+xItems+75, yItems-30+50);
 
-  textSize(tamTitle);
+  rectMode(CENTER);
+  fill(255);
+  noStroke();
+  rect(width-xItems-105, yItems-10, 30, 30);
   textAlign(CENTER);
+  fill(colorFill);
+  text(idIndexJSON, width-xItems-105, yItems-5);
+
+  textSize(tamTitle);
+
   text("Direcciones OSC", width-275, yItems+160);
 
   textAlign(BASELINE);
@@ -116,6 +126,11 @@ void InitGUI() {
 
   serialPortBtn = new GImageButton(this, xItems+400, yItems-65, 135, 50, imgsSerialPortButton);
 
+  addOSCBtn = new GImageButton(this, width-xItems-50, yItems-20, 21, 21, imgsAddButton);
+  removeOSCBtn = new GImageButton(this, width-xItems-175, yItems-20, 21, 21, imgsRemoveButton);
+  upIndexBtn = new GImageButton(this, width-xItems-75, yItems-20, 21, 21, imgsUpButton);
+  downIndexBtn = new GImageButton(this, width-xItems-150, yItems-20, 21, 21, imgsDownButton);
+
   isInitGUI = true;
 }
 //=========================================
@@ -128,15 +143,19 @@ void ChangeOSCSend() {
     sendPort = int(portText.getText());
 
     if (sendPort > 1 && sendPort <= 65535) {
+      NetAddress myRemoteLocation = remoteLocations.get(idIndexJSON);
       myRemoteLocation = new NetAddress(oscIP, sendPort);
     } else {
       isAlertPort = true;
     }
 
-    json.setString("portSerial", serialPort);
-    json.setString("ipOSC", oscIP);
-    json.setInt("portOSC", sendPort);
-    saveJSONObject(json, "data/data.json");
+    JSONObject j = new JSONObject();
+    j.setInt("id", idIndexJSON);
+    j.setString("portSerial", serialPort);
+    j.setString("ipOSC", oscIP);
+    j.setInt("portOSC", sendPort);
+    json.setJSONObject(idIndexJSON, j);
+    saveJSONArray(json, "data/data.json");
 
     isChangeIpPort = false;
   }
@@ -313,6 +332,84 @@ void handleButtonEvents(GImageButton button, GEvent event) {
     serialPort = serialPortText.getText();
     estadoMind = "Conectando...";
     isTryGetConnection = true;
+  }
+
+  if (button == addOSCBtn && event == GEvent.CLICKED) {
+    JSONObject j = new JSONObject();
+    j.setInt("id", json.size());
+    j.setString("portSerial", " ");
+    j.setString("ipOSC", "127.0.0.1");
+    j.setInt("portOSC", 7000);
+    json.setJSONObject(json.size(), j);
+    saveJSONArray(json, "data/data.json");
+
+    serialPortText.setText(" ");
+    ipText.setText("127.0.0.1");
+    portText.setText(str(7000));
+    serialPort = serialPortText.getText();
+    oscIP = ipText.getText();
+    sendPort = int(portText.getText());
+    idIndexJSON++;
+
+    remoteLocations.add(new NetAddress("127.0.0.1", 7000));
+  }
+
+  if (button == removeOSCBtn && event == GEvent.CLICKED) {
+    json.remove(idIndexJSON);
+    saveJSONArray(json, "data/data.json");
+
+    remoteLocations.remove(idIndexJSON);
+
+    idIndexJSON--;
+    JSONObject item = json.getJSONObject(idIndexJSON); 
+    serialPort = item.getString("portSerial");
+    oscIP = item.getString("ipOSC");
+    sendPort = item.getInt("portOSC");
+    serialPortText.setText(serialPort);
+    ipText.setText(oscIP);
+    portText.setText(str(sendPort));
+  }
+
+  if (button == upIndexBtn && event == GEvent.CLICKED) {
+    idIndexJSON++;
+    JSONObject item = json.getJSONObject(idIndexJSON); 
+    serialPort = item.getString("portSerial");
+    oscIP = item.getString("ipOSC");
+    sendPort = item.getInt("portOSC");
+    serialPortText.setText(serialPort);
+    ipText.setText(oscIP);
+    portText.setText(str(sendPort));
+  }
+
+  if (button == downIndexBtn && event == GEvent.CLICKED) {
+    idIndexJSON--;
+    JSONObject item = json.getJSONObject(idIndexJSON); 
+    serialPort = item.getString("portSerial");
+    oscIP = item.getString("ipOSC");
+    sendPort = item.getInt("portOSC");
+    serialPortText.setText(serialPort);
+    ipText.setText(oscIP);
+    portText.setText(str(sendPort));
+  }
+}
+
+void OSCButtonsStatus() {
+  if (json.size() > 1 && idIndexJSON > 0) {
+    removeOSCBtn.setEnabled(true);
+  } else {
+    removeOSCBtn.setEnabled(false);
+  }
+
+  if (json.size()-1 == idIndexJSON) {
+    upIndexBtn.setEnabled(false);
+  } else {
+    upIndexBtn.setEnabled(true);
+  }
+
+  if (json.size() == 1 || idIndexJSON == 0) {
+    downIndexBtn.setEnabled(false);
+  } else {
+    downIndexBtn.setEnabled(true);
   }
 }
 //=======================================================
