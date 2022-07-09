@@ -251,6 +251,10 @@ public void handleTextEvents(GEditableTextControl textControl, GEvent event) {
 
 void handleButtonEvents(GImageButton button, GEvent event) {
   if (button == serialPortBtn && event == GEvent.CLICKED) {
+    if (mindSet != null) {
+      mindSet.quit();
+    }
+
     serialPort = serialPortText.getText();
     estadoMind = "Conectando...";
     isTryGetConnection = true;
