@@ -149,13 +149,14 @@ void ChangeOSCSend() {
       isAlertPort = true;
     }
 
+    json.setString("portSerial", serialPort);
     JSONObject j = new JSONObject();
     j.setInt("id", idIndexJSON);
-    j.setString("portSerial", serialPort);
     j.setString("ipOSC", oscIP);
     j.setInt("portOSC", sendPort);
-    json.setJSONObject(idIndexJSON, j);
-    saveJSONArray(json, "data/data.json");
+    ja.setJSONObject(idIndexJSON, j);
+    json.setJSONArray("osc", ja);
+    saveJSONObject(json, "data/data.json");
 
     isChangeIpPort = false;
   }
@@ -335,18 +336,17 @@ void handleButtonEvents(GImageButton button, GEvent event) {
   }
 
   if (button == addOSCBtn && event == GEvent.CLICKED) {
+    json.setString("portSerial", serialPort);
     JSONObject j = new JSONObject();
-    j.setInt("id", json.size());
-    j.setString("portSerial", " ");
+    j.setInt("id", ja.size());
     j.setString("ipOSC", "127.0.0.1");
     j.setInt("portOSC", 7000);
-    json.setJSONObject(json.size(), j);
-    saveJSONArray(json, "data/data.json");
+    ja.setJSONObject(ja.size(), j);
+    json.setJSONArray("osc", ja);
+    saveJSONObject(json, "data/data.json");
 
-    serialPortText.setText(" ");
     ipText.setText("127.0.0.1");
     portText.setText(str(7000));
-    serialPort = serialPortText.getText();
     oscIP = ipText.getText();
     sendPort = int(portText.getText());
     idIndexJSON++;
@@ -355,58 +355,55 @@ void handleButtonEvents(GImageButton button, GEvent event) {
   }
 
   if (button == removeOSCBtn && event == GEvent.CLICKED) {
-    json.remove(idIndexJSON);
-    saveJSONArray(json, "data/data.json");
+    ja = json.getJSONArray("osc");
+    ja.remove(idIndexJSON);
+    saveJSONObject(json, "data/data.json");
 
     remoteLocations.remove(idIndexJSON);
 
     idIndexJSON--;
-    JSONObject item = json.getJSONObject(idIndexJSON); 
-    serialPort = item.getString("portSerial");
+    JSONObject item = ja.getJSONObject(idIndexJSON); 
     oscIP = item.getString("ipOSC");
     sendPort = item.getInt("portOSC");
-    serialPortText.setText(serialPort);
     ipText.setText(oscIP);
     portText.setText(str(sendPort));
   }
 
   if (button == upIndexBtn && event == GEvent.CLICKED) {
+    ja = json.getJSONArray("osc");
     idIndexJSON++;
-    JSONObject item = json.getJSONObject(idIndexJSON); 
-    serialPort = item.getString("portSerial");
+    JSONObject item = ja.getJSONObject(idIndexJSON); 
     oscIP = item.getString("ipOSC");
     sendPort = item.getInt("portOSC");
-    serialPortText.setText(serialPort);
     ipText.setText(oscIP);
     portText.setText(str(sendPort));
   }
 
   if (button == downIndexBtn && event == GEvent.CLICKED) {
+    ja = json.getJSONArray("osc");
     idIndexJSON--;
-    JSONObject item = json.getJSONObject(idIndexJSON); 
-    serialPort = item.getString("portSerial");
+    JSONObject item = ja.getJSONObject(idIndexJSON); 
     oscIP = item.getString("ipOSC");
     sendPort = item.getInt("portOSC");
-    serialPortText.setText(serialPort);
     ipText.setText(oscIP);
     portText.setText(str(sendPort));
   }
 }
 
-void OSCButtonsStatus() {
-  if (json.size() > 1 && idIndexJSON > 0) {
+void OSCButtonsStatus() {  
+  if (ja.size() > 1 && idIndexJSON > 0) {
     removeOSCBtn.setEnabled(true);
   } else {
     removeOSCBtn.setEnabled(false);
   }
 
-  if (json.size()-1 == idIndexJSON) {
+  if (ja.size()-1 == idIndexJSON) {
     upIndexBtn.setEnabled(false);
   } else {
     upIndexBtn.setEnabled(true);
   }
 
-  if (json.size() == 1 || idIndexJSON == 0) {
+  if (ja.size() == 1 || idIndexJSON == 0) {
     downIndexBtn.setEnabled(false);
   } else {
     downIndexBtn.setEnabled(true);

@@ -17,7 +17,6 @@ MindSet mindSet;
 String serialPort = ""; //Puerto Saliente
 
 OscP5 oscP5;
-//NetAddress myRemoteLocation;
 ArrayList<NetAddress> remoteLocations = new ArrayList<NetAddress>();
 int sendPort = 7000; //Puerto para enviar informacion
 String oscIP = "127.0.0.1"; //Direccion IP de conexion osc
@@ -52,7 +51,8 @@ PImage background, splash;
 boolean isAppInit;
 boolean isSimulation, isChangeStatusSimulation;
 
-JSONArray json;
+JSONObject json;
+JSONArray ja;
 int idIndexJSON;
 
 void setup() {
@@ -66,30 +66,36 @@ void setup() {
   splash = loadImage("Splash.png");
 
   try {
-    json = loadJSONArray("data.json");
+    json = loadJSONObject("data.json");
 
-    JSONObject item = json.getJSONObject(0);
+    serialPort = json.getString("portSerial");
+
+    ja = json.getJSONArray("osc");
+    JSONObject item = ja.getJSONObject(0);
     idIndexJSON = item.getInt("id");
-    serialPort = item.getString("portSerial");
     oscIP = item.getString("ipOSC");
     sendPort = item.getInt("portOSC");
 
-    for (int i = 0; i<json.size(); i++) {
-      JSONObject it = json.getJSONObject(i);
+    for (int i = 0; i<ja.size(); i++) {
+      JSONObject it = ja.getJSONObject(i);
       remoteLocations.add(new NetAddress(it.getString("ipOSC"), it.getInt("portOSC")));
     }
   } 
   catch (Exception e) {
-    json = new JSONArray();
+    json = new JSONObject();
 
+    json.setString("portSerial", " ");
+
+    ja = new JSONArray();
     JSONObject j = new JSONObject();
     j.setInt("id", 0);
-    j.setString("portSerial", " ");
     j.setString("ipOSC", "127.0.0.1");
     j.setInt("portOSC", 7000);
-    json.setJSONObject(0, j);
-    saveJSONArray(json, "data/data.json");
-    
+    ja.setJSONObject(0, j);
+    json.setJSONArray("osc", ja);
+
+    saveJSONObject(json, "data/data.json");
+
     remoteLocations.add(new NetAddress("127.0.0.1", 7000));
   }
 
