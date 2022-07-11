@@ -1,4 +1,9 @@
 {
+  "addressOsc": [{
+    "address": "",
+    "id": 0,
+    "indexValue": 0
+  }],
   "portSerial": " ",
   "osc": [{
     "ipOSC": "127.0.0.1",

@@ -3,7 +3,7 @@
  NeuroMind by Luciano Nahuel Espinosa - 2022
  https://lucianoespinosa-7954e.firebaseapp.com
  
- Version: 1.1
+ Version: 1.2
  
  */
 
@@ -28,7 +28,7 @@ String[] imgsAddButton = {"ADD.png", "ADD_Hover.png", "ADD_Pressed.png"};
 String[] imgsRemoveButton = {"REMOVE.png", "REMOVE_Hover.png", "REMOVE_Pressed.png"};
 String[] imgsUpButton = {"UP_Index.png", "UP_Index_Hover.png", "UP_Index_Pressed.png"};
 String[] imgsDownButton = {"DOWN_Index.png", "DOWN_Index_Hover.png", "DOWN_Index_Pressed.png"};
-boolean isChangeIpPort, isInitGUI, inFocusInput;
+boolean isChangeIpPort, isInitGUI, inFocusInput, isKeyPressed;
 
 float attention, meditation;
 float attenBefore, mediBefore;
@@ -52,7 +52,7 @@ boolean isAppInit;
 boolean isSimulation, isChangeStatusSimulation;
 
 JSONObject json;
-JSONArray ja;
+JSONArray ja, ja2;
 int idIndexJSON;
 
 void setup() {
@@ -80,6 +80,18 @@ void setup() {
       JSONObject it = ja.getJSONObject(i);
       remoteLocations.add(new NetAddress(it.getString("ipOSC"), it.getInt("portOSC")));
     }
+
+    ja2 = json.getJSONArray("addressOsc");
+    for (int i = 0; i<ja2.size(); i++) {
+      JSONObject it = ja2.getJSONObject(i);
+      MessagesOsc.add(new OscMessage(it.getString("address")));
+      indexDropdownValue.add(it.getInt("indexValue"));
+    }
+    JSONObject item2 = ja2.getJSONObject(0);
+    indexOSCAddresses = item2.getInt("id");
+    currentAddress = item2.getString("address");
+    indexDropdown = item2.getInt("indexValue");
+    currentIndexDropdown = item2.getInt("indexValue");
   } 
   catch (Exception e) {
     json = new JSONObject();
@@ -93,6 +105,14 @@ void setup() {
     j.setInt("portOSC", 7000);
     ja.setJSONObject(0, j);
     json.setJSONArray("osc", ja);
+
+    ja2 = new JSONArray();
+    JSONObject j2 = new JSONObject();
+    j2.setInt("id", 0);
+    j2.setString("address", " ");
+    j2.setInt("indexValue", 0);
+    ja2.setJSONObject(0, j2);
+    json.setJSONArray("addressOsc", ja2);
 
     saveJSONObject(json, "data/data.json");
 
@@ -123,7 +143,11 @@ void draw() {
     ChangeOSCSend();
     OSCButtonsStatus();
     simulate(); //Simulation Sensor's Values
+
+    CustomOSCAddresses();
   } else {
     Splash();
   }
+
+  //println("FPS: " + frameRate);
 }
