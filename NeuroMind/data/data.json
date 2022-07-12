@@ -1,6 +1,9 @@
 {
   "addressOsc": [{
-    "address": "",
+    "toMapValue": 0,
+    "address": " ",
+    "isMapValue": false,
+    "fromMapValue": 0,
     "id": 0,
     "indexValue": 0
   }],

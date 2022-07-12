@@ -86,12 +86,19 @@ void setup() {
       JSONObject it = ja2.getJSONObject(i);
       MessagesOsc.add(new OscMessage(it.getString("address")));
       indexDropdownValue.add(it.getInt("indexValue"));
+      areNeedMapValue.add(it.getBoolean("isMapValue"));
+      fromMapValues.add(it.getFloat("fromMapValue"));
+      toMapValues.add(it.getFloat("toMapValue"));
     }
     JSONObject item2 = ja2.getJSONObject(0);
     indexOSCAddresses = item2.getInt("id");
     currentAddress = item2.getString("address");
     indexDropdown = item2.getInt("indexValue");
     currentIndexDropdown = item2.getInt("indexValue");
+    changeOption = item2.getBoolean("isMapValue");
+    currentOption = item2.getBoolean("isMapValue");
+    currentFromMap = item2.getFloat("fromMapValue");
+    currentToMap = item2.getFloat("toMapValue");
   } 
   catch (Exception e) {
     json = new JSONObject();
@@ -111,8 +118,17 @@ void setup() {
     j2.setInt("id", 0);
     j2.setString("address", " ");
     j2.setInt("indexValue", 0);
+    j2.setBoolean("isMapValue", false);
+    j2.setFloat("fromMapValue", 0.0);
+    j2.setFloat("toMapValue", 0.0);
     ja2.setJSONObject(0, j2);
     json.setJSONArray("addressOsc", ja2);
+
+    MessagesOsc.add(new OscMessage(" "));
+    indexDropdownValue.add(0);
+    areNeedMapValue.add(false);
+    fromMapValues.add(0.0);
+    toMapValues.add(0.0);
 
     saveJSONObject(json, "data/data.json");
 
@@ -140,7 +156,7 @@ void draw() {
     infoMind(24, 16, 14, 12, 0);  //infoMind("tamanio titulos", "tamanio texto general", tamaño texto direcciones", "tamanio texto asignacion de teclas", "color de los textos")
     GetConnection();
     CheckStatusConnection();
-    ChangeOSCSend();
+    Osc();
     OSCButtonsStatus();
     simulate(); //Simulation Sensor's Values
 

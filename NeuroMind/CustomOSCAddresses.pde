@@ -1,16 +1,23 @@
 ArrayList<OscMessage> MessagesOsc = new ArrayList<OscMessage>();
 ArrayList<Integer> indexDropdownValue = new ArrayList<Integer>();
+ArrayList<Boolean> areNeedMapValue = new ArrayList<Boolean>();
+ArrayList<Float> fromMapValues = new ArrayList<Float>();
+ArrayList<Float> toMapValues = new ArrayList<Float>();
 int indexOSCAddresses, indexDropdown, currentIndexDropdown;
 String currentAddress;
+boolean changeOption, currentOption;
+float currentFromMap, currentToMap;
 
-GTextField addressInput;
+GTextField addressInput, fromMapInput, toMapInput;
 GDropList dropdownSensorValues;
 String[] dropdownItems = {"Atencion", "Meditacion", "Delta", "Theta", "LowAlpha", "HighAlpha", "LowBeta", "HighBeta", "LowGamma", "MidGamma"};
 GImageButton addOSCAddressBtn, removeOSCAddressBtn, upIndexAddressBtn, downIndexAddressBtn;
+GToggleGroup optionGroup;
+GOption optionYes, optionNo;
 
 boolean isShowHidePopUp, isShowPopUp, isCreatedInputs;
 int alphaInputsBehindPopUp = 100;
-float heightInputs = 10;
+float heightInputs = -25;
 
 void CustomOSCAddresses() {
   showHidePopUp();
@@ -28,7 +35,7 @@ void CustomOSCAddresses() {
     PopUpCustomOSCAddresses();
   } else {
     if (isCreatedInputs) {
-      removeInputsPopUp();
+      showHideInputsPopUp(false);
     }
 
     ipText.setAlpha(255);
@@ -54,17 +61,17 @@ void PopUpCustomOSCAddresses() {
 
   rectMode(CENTER);
   fill(242);
-  rect(width/2, height/2, width/2, height/2-200, 25);
+  rect(width/2, height/2, width/2, height/2-175, 25);
 
   textAlign(CENTER);
   fill(0);
   textSize(16);
-  text("Enviar valores a direcciones OSC personalizadas", width/2, height/2-40);
+  text("Enviar valores a direcciones OSC personalizadas", width/2, height/2-60);
 
   if (!isCreatedInputs) {
     createInputsPopUp();
   } else {
-    showInputsPopUp();
+    showHideInputsPopUp(true);
   }
 
   fill(255);
@@ -73,9 +80,21 @@ void PopUpCustomOSCAddresses() {
   fill(0);
   text(indexOSCAddresses, width/2+160, height/2+heightInputs+15);
 
+  text("¿Se tiene que mapear los valores?", width/2-125, height/2+heightInputs+60);
+
+  if (changeOption) {
+    fromMapInput.setVisible(true);
+    toMapInput.setVisible(true);
+    text("Desde", width/2+50, height/2+heightInputs+92.5);
+    text("Hasta", width/2+150, height/2+heightInputs+92.5);
+  } else {
+    fromMapInput.setVisible(false);
+    toMapInput.setVisible(false);
+  }
+
   popStyle();
 
-  if (currentAddress != addressInput.getText() || currentIndexDropdown != indexDropdown) {
+  if (currentAddress != addressInput.getText() || currentIndexDropdown != indexDropdown || currentOption != changeOption || currentFromMap != float(fromMapInput.getText()) || currentToMap != float(toMapInput.getText())) {
     image(alert, width/2-alert.width/2, 10);
   }
 }
@@ -112,25 +131,46 @@ void createInputsPopUp() {
   upIndexAddressBtn = new GImageButton(this, width/2+200, height/2+heightInputs, 21, 21, imgsUpButton);
   downIndexAddressBtn = new GImageButton(this, width/2+100, height/2+heightInputs, 21, 21, imgsDownButton);
 
+  optionNo = new GOption(this, width/2-75, height/2+heightInputs+75, 40, 30, "No");
+  optionYes = new GOption(this, width/2-25, height/2+heightInputs+75, 40, 30, "Si");
+
+  optionGroup = new GToggleGroup();
+  optionGroup.addControls(optionNo, optionYes);
+
+  if (currentOption) {
+    optionNo.setSelected(false);
+    optionYes.setSelected(true);
+  } else {
+    optionNo.setSelected(true);
+    optionYes.setSelected(false);
+  }
+
+  fromMapInput = new GTextField(this, width/2+75, height/2+heightInputs+78, 30, 20);
+  fromMapInput.tag = "fromMapInput";
+  fromMapInput.setPromptText("Desde");
+  fromMapInput.setText(str(currentFromMap));
+  fromMapInput.setNumericType(G4P.DECIMAL);
+
+  toMapInput = new GTextField(this, width/2+175, height/2+heightInputs+78, 30, 20);
+  toMapInput.tag = "toMapInput";
+  toMapInput.setPromptText("Hasta");
+  toMapInput.setText(str(currentToMap));
+  toMapInput.setNumericType(G4P.DECIMAL);
+
   isCreatedInputs = true;
 }
 
-void showInputsPopUp() {
-  addressInput.setVisible(true);
-  dropdownSensorValues.setVisible(true);
-  addOSCAddressBtn.setVisible(true);
-  removeOSCAddressBtn.setVisible(true);
-  upIndexAddressBtn.setVisible(true);
-  downIndexAddressBtn.setVisible(true);
-}
-
-void removeInputsPopUp() {
-  addressInput.setVisible(false);
-  dropdownSensorValues.setVisible(false);
-  addOSCAddressBtn.setVisible(false);
-  removeOSCAddressBtn.setVisible(false);
-  upIndexAddressBtn.setVisible(false);
-  downIndexAddressBtn.setVisible(false);
+void showHideInputsPopUp(boolean b) {
+  addressInput.setVisible(b);
+  dropdownSensorValues.setVisible(b);
+  addOSCAddressBtn.setVisible(b);
+  removeOSCAddressBtn.setVisible(b);
+  upIndexAddressBtn.setVisible(b);
+  downIndexAddressBtn.setVisible(b);
+  optionNo.setVisible(b);
+  optionYes.setVisible(b);
+  fromMapInput.setVisible(b);
+  toMapInput.setVisible(b);
 }
 //===============================================
 
@@ -139,7 +179,11 @@ void OscCustomValue() {
   for (int i = 0; i<MessagesOsc.size(); i++) {
     OscMessage message = MessagesOsc.get(i);
 
-    message.add(sendOSCCustomValue(indexDropdownValue.get(i)));
+    if (!areNeedMapValue.get(i)) {
+      message.add(sendOSCCustomValue(indexDropdownValue.get(i)));
+    } else {
+      message.add(sendOSCCustomValue(indexDropdownValue.get(i), fromMapValues.get(i), toMapValues.get(i)));
+    }
 
     for (NetAddress n : remoteLocations) {
       oscP5.send(message, n);
@@ -170,6 +214,30 @@ float sendOSCCustomValue(int index) {
     return mindWaveFrequencies[6];
   } else {
     return mindWaveFrequencies[7];
+  }
+}
+
+float sendOSCCustomValue(int index, float from, float to) {
+  if (index == 0) {
+    return map(attention, 0, 100, from, to);
+  } else if (index == 1) {
+    return map(meditation, 0, 100, from, to);
+  } else if (index == 2) {
+    return map(mindWaveFrequencies[0], 0, 1000, from, to);
+  } else if (index == 3) {
+    return map(mindWaveFrequencies[1], 0, 1000, from, to);
+  } else if (index == 4) {
+    return map(mindWaveFrequencies[2], 0, 1000, from, to);
+  } else if (index == 5) {
+    return map(mindWaveFrequencies[3], 0, 1000, from, to);
+  } else if (index == 6) {
+    return map(mindWaveFrequencies[4], 0, 1000, from, to);
+  } else if (index == 7) {
+    return map(mindWaveFrequencies[5], 0, 1000, from, to);
+  } else if (index == 8) {
+    return map(mindWaveFrequencies[6], 0, 1000, from, to);
+  } else {
+    return map(mindWaveFrequencies[7], 0, 1000, from, to);
   }
 }
 //===============================================

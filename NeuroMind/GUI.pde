@@ -134,15 +134,25 @@ void handleButtonEvents(GImageButton button, GEvent event) {
     j.setInt("id", ja2.size());
     j.setString("address", " ");
     j.setInt("indexValue", 0);
+    j.setBoolean("isMapValue", false);
+    j.setFloat("fromMapValue", 0.0);
+    j.setFloat("toMapValue", 0.0);
     ja2.setJSONObject(ja2.size(), j);
     json.setJSONArray("addressOsc", ja2);
     saveJSONObject(json, "data/data.json");
 
     MessagesOsc.add(new OscMessage(" "));
     indexDropdownValue.add(0);
+    areNeedMapValue.add(false);
+    fromMapValues.add(0.0);
+    toMapValues.add(0.0);
 
     addressInput.setText("");
     dropdownSensorValues.setSelected(0);
+    optionNo.setSelected(true);
+    optionYes.setSelected(false);
+    fromMapInput.setText("0.0");
+    toMapInput.setText("0.0");
 
     if (indexOSCAddresses == ja2.size()-2) {
       indexOSCAddresses++;
@@ -158,6 +168,9 @@ void handleButtonEvents(GImageButton button, GEvent event) {
 
     MessagesOsc.remove(indexOSCAddresses);
     indexDropdownValue.remove(indexOSCAddresses);
+    areNeedMapValue.remove(indexOSCAddresses);
+    fromMapValues.remove(indexOSCAddresses);
+    toMapValues.remove(indexOSCAddresses);
 
     indexOSCAddresses--;
 
@@ -165,9 +178,23 @@ void handleButtonEvents(GImageButton button, GEvent event) {
     currentAddress = item.getString("address");
     indexDropdown = item.getInt("indexValue");
     currentIndexDropdown = item.getInt("indexValue");
+    changeOption = item.getBoolean("isMapValue");
+    currentOption = item.getBoolean("isMapValue");
+    currentFromMap = item.getFloat("fromMapValue");
+    currentToMap = item.getFloat("toMapValue");
 
     addressInput.setText(item.getString("address"));
     dropdownSensorValues.setSelected(item.getInt("indexValue"));
+    fromMapInput.setText(str(item.getFloat("fromMapValue")));
+    toMapInput.setText(str(item.getFloat("toMapValue")));
+
+    if (item.getBoolean("isMapValue")) {
+      optionNo.setSelected(false);
+      optionYes.setSelected(true);
+    } else {
+      optionNo.setSelected(true);
+      optionYes.setSelected(false);
+    }
   }
 
   if (button == upIndexAddressBtn && event == GEvent.CLICKED) {
@@ -179,9 +206,23 @@ void handleButtonEvents(GImageButton button, GEvent event) {
     currentAddress = item.getString("address");
     indexDropdown = item.getInt("indexValue");
     currentIndexDropdown = item.getInt("indexValue");
+    changeOption = item.getBoolean("isMapValue");
+    currentOption = item.getBoolean("isMapValue");
+    currentFromMap = item.getFloat("fromMapValue");
+    currentToMap = item.getFloat("toMapValue");
 
     addressInput.setText(item.getString("address"));
     dropdownSensorValues.setSelected(item.getInt("indexValue"));
+    fromMapInput.setText(str(item.getFloat("fromMapValue")));
+    toMapInput.setText(str(item.getFloat("toMapValue")));
+
+    if (item.getBoolean("isMapValue")) {
+      optionNo.setSelected(false);
+      optionYes.setSelected(true);
+    } else {
+      optionNo.setSelected(true);
+      optionYes.setSelected(false);
+    }
   }
 
   if (button == downIndexAddressBtn && event == GEvent.CLICKED) {
@@ -193,9 +234,23 @@ void handleButtonEvents(GImageButton button, GEvent event) {
     currentAddress = item.getString("address");
     indexDropdown = item.getInt("indexValue");
     currentIndexDropdown = item.getInt("indexValue");
+    changeOption = item.getBoolean("isMapValue");
+    currentOption = item.getBoolean("isMapValue");
+    currentFromMap = item.getFloat("fromMapValue");
+    currentToMap = item.getFloat("toMapValue");
 
     addressInput.setText(item.getString("address"));
     dropdownSensorValues.setSelected(item.getInt("indexValue"));
+    fromMapInput.setText(str(item.getFloat("fromMapValue")));
+    toMapInput.setText(str(item.getFloat("toMapValue")));
+
+    if (item.getBoolean("isMapValue")) {
+      optionNo.setSelected(false);
+      optionYes.setSelected(true);
+    } else {
+      optionNo.setSelected(true);
+      optionYes.setSelected(false);
+    }
   }
 }
 
@@ -243,6 +298,12 @@ void OSCButtonsStatus() {
 void handleDropListEvents(GDropList list, GEvent event) {
   if (event == GEvent.SELECTED) {
     indexDropdown = list.getSelectedIndex();
+  }
+}
+
+public void handleToggleControlEvents(GToggleControl option, GEvent event) {
+  if (event == GEvent.SELECTED) {
+    changeOption = !changeOption;
   }
 }
 //=======================================================

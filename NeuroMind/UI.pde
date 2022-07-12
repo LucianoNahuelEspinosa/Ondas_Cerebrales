@@ -26,24 +26,6 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignatio
   text("Estado conexión: " + estadoMind, xItems, yItems);
   popStyle();
 
-  for (int i = 0; i<direcciones.length; i++) {
-    for (int j = 0; j<mindWaveFrequencies.length; j++) {
-      OSCMessages[i] = new OscMessage(direcciones[i]);
-
-      if (i == 0) {
-        OSCMessages[i].add(attention);
-      } else if (i == 1) {
-        OSCMessages[i].add(meditation);
-      } else {
-        OSCMessages[i].add(mindWaveFrequencies[j]);
-      }
-
-      for (NetAddress n : remoteLocations) {
-        oscP5.send(OSCMessages[i], n);
-      }
-    }
-  }
-
   text("Nivel de Atencion: " + attention, xItems, yItems + 50);
   attentionWidget.draw(xItems + 250, yItems + 25, 300, 25);
 
