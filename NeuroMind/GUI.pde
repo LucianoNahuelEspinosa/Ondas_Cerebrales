@@ -2,21 +2,21 @@
 void InitGUI() {
   ipText = new GTextField(this, width/2+xItems+175, yItems-45, 80, 20);
   ipText.tag = "IpAddress";
-  ipText.setPromptText("Direccion IP");
+  ipText.setPromptText(inEnglish ? "IP Address" : "Direccion IP");
   ipText.setText(oscIP);
 
   portText = new GTextField(this, width/2+xItems+200, yItems-30+35, 50, 20);
   portText.tag = "portNumber";
-  portText.setPromptText("Puerto");
+  portText.setPromptText(inEnglish ? "Port" : "Puerto");
   portText.setText(str(sendPort));
   portText.setNumericType(G4P.INTEGER);
 
   serialPortText = new GTextField(this, xItems+180, yItems-50, 200, 20);
   serialPortText.tag = "serialPort";
-  serialPortText.setPromptText("Puerto Serial");
+  serialPortText.setPromptText(inEnglish ? "Serial Port" : "Puerto Serial");
   serialPortText.setText(serialPort);
 
-  serialPortBtn = new GImageButton(this, xItems+400, yItems-65, 135, 50, imgsSerialPortButton);
+  serialPortBtn = new GImageButton(this, xItems+400, yItems-65, 135, 50, inEnglish ? imgsSerialPortButtonEn : imgsSerialPortButton);
 
   addOSCBtn = new GImageButton(this, width-xItems-50, yItems-20, 21, 21, imgsAddButton);
   removeOSCBtn = new GImageButton(this, width-xItems-175, yItems-20, 21, 21, imgsRemoveButton);
@@ -66,11 +66,13 @@ void handleButtonEvents(GImageButton button, GEvent event) {
 
     serialPort = serialPortText.getText();
     estadoMind = "Conectando...";
+    MindStatus = "Connecting...";
     isTryGetConnection = true;
   }
 
   if (button == addOSCBtn && event == GEvent.CLICKED) {
     json.setString("portSerial", serialPort);
+    json.setBoolean("inEnglish", inEnglish);
     JSONObject j = new JSONObject();
     j.setInt("id", ja.size());
     j.setString("ipOSC", "127.0.0.1");

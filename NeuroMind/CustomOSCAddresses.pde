@@ -4,13 +4,13 @@ ArrayList<Boolean> areNeedMapValue = new ArrayList<Boolean>();
 ArrayList<Float> fromMapValues = new ArrayList<Float>();
 ArrayList<Float> toMapValues = new ArrayList<Float>();
 int indexOSCAddresses, indexDropdown, currentIndexDropdown;
-String currentAddress;
+String currentAddress = " ";
 boolean changeOption, currentOption;
 float currentFromMap, currentToMap;
 
 GTextField addressInput, fromMapInput, toMapInput;
 GDropList dropdownSensorValues;
-String[] dropdownItems = {"Atencion", "Meditacion", "Delta", "Theta", "LowAlpha", "HighAlpha", "LowBeta", "HighBeta", "LowGamma", "MidGamma"};
+String[] dropdownItems = {"Attention", "Meditation", "Delta", "Theta", "LowAlpha", "HighAlpha", "LowBeta", "HighBeta", "LowGamma", "MidGamma"};
 GImageButton addOSCAddressBtn, removeOSCAddressBtn, upIndexAddressBtn, downIndexAddressBtn;
 GToggleGroup optionGroup;
 GOption optionYes, optionNo;
@@ -67,12 +67,16 @@ void PopUpCustomOSCAddresses() {
   textAlign(CENTER);
   fill(0);
   textSize(16);
-  text("Enviar valores a direcciones OSC personalizadas", width/2, height/2-60);
+  text(inEnglish ? "Send values to custom OSC Addresses" : "Enviar valores a direcciones OSC personalizadas", width/2, height/2-60);
 
   if (!isCreatedInputs) {
     createInputsPopUp();
   } else {
     showHideInputsPopUp(true);
+    addressInput.setPromptText(inEnglish ? "OSC Address" : "Direccion OSC");
+    optionYes.setText(inEnglish ? "Yes" : "Si");
+    fromMapInput.setPromptText(inEnglish ? "From" : "Desde");
+    toMapInput.setPromptText(inEnglish ? "To" : "Hasta");
   }
 
   textFont(robotoRegular);
@@ -84,14 +88,14 @@ void PopUpCustomOSCAddresses() {
 
   textFont(robotoBold);
   textSize(14);
-  text("¿Se tiene que mapear los valores?", width/2-125, height/2+heightInputs+60);
+  text(inEnglish ? "Do the values have to be mapped?" : "¿Se tiene que mapear los valores?", width/2-125, height/2+heightInputs+60);
 
   textFont(robotoRegular);
   if (changeOption) {
     fromMapInput.setVisible(true);
     toMapInput.setVisible(true);
-    text("Desde", width/2+50, height/2+heightInputs+92.5);
-    text("Hasta", width/2+150, height/2+heightInputs+92.5);
+    text(inEnglish ? "From" : "Desde", width/2+50, height/2+heightInputs+92.5);
+    text(inEnglish ? "To" : "Hasta", width/2+150, height/2+heightInputs+92.5);
   } else {
     fromMapInput.setVisible(false);
     toMapInput.setVisible(false);
@@ -100,7 +104,7 @@ void PopUpCustomOSCAddresses() {
   popStyle();
 
   if (currentAddress != addressInput.getText() || currentIndexDropdown != indexDropdown || currentOption != changeOption || currentFromMap != float(fromMapInput.getText()) || currentToMap != float(toMapInput.getText())) {
-    image(alert, width/2-alert.width/2, 10);
+    image(inEnglish ? alertEn : alert, width/2-alert.width/2, 10);
   }
 }
 //===============================================
@@ -122,7 +126,7 @@ void showHidePopUp() {
 void createInputsPopUp() {
   addressInput = new GTextField(this, width/2-275, height/2+heightInputs, 225, 20);
   addressInput.tag = "OscAddress";
-  addressInput.setPromptText("Direccion OSC");
+  addressInput.setPromptText(inEnglish ? "OSC Address" : "Direccion OSC");
   addressInput.setText(currentAddress);
 
   dropdownSensorValues = new GDropList(this, width/2-25, height/2+heightInputs, 75, 100);
@@ -145,7 +149,7 @@ void createInputsPopUp() {
 
   optionNo = new GOption(this, width/2-75, height/2+heightInputs+75, 40, 30, "No");
   optionNo.setIcon(ico, GAlign.WEST, GAlign.CENTER, GAlign.MIDDLE);
-  optionYes = new GOption(this, width/2-25, height/2+heightInputs+75, 40, 30, "Si");
+  optionYes = new GOption(this, width/2-25, height/2+heightInputs+75, 45, 30, inEnglish ? "Yes" : "Si");
   optionYes.setIcon(ico, GAlign.WEST, GAlign.CENTER, GAlign.MIDDLE);
 
   optionGroup = new GToggleGroup();
@@ -161,13 +165,13 @@ void createInputsPopUp() {
 
   fromMapInput = new GTextField(this, width/2+75, height/2+heightInputs+80, 30, 15);
   fromMapInput.tag = "fromMapInput";
-  fromMapInput.setPromptText("Desde");
+  fromMapInput.setPromptText(inEnglish ? "From" : "Desde");
   fromMapInput.setText(str(currentFromMap));
   fromMapInput.setNumericType(G4P.DECIMAL);
 
   toMapInput = new GTextField(this, width/2+175, height/2+heightInputs+80, 30, 15);
   toMapInput.tag = "toMapInput";
-  toMapInput.setPromptText("Hasta");
+  toMapInput.setPromptText(inEnglish ? "To" : "Hasta");
   toMapInput.setText(str(currentToMap));
   toMapInput.setNumericType(G4P.DECIMAL);
 

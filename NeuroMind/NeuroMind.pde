@@ -24,6 +24,7 @@ String oscIP = "127.0.0.1"; //Direccion IP de conexion osc
 GTextField portText, ipText, serialPortText;
 GImageButton serialPortBtn, addOSCBtn, removeOSCBtn, upIndexBtn, downIndexBtn;
 String[] imgsSerialPortButton = {"SerialPortButton_Idle.png", "SerialPortButton_Hover.png", "SerialPortButton_Pressed.png"};
+String[] imgsSerialPortButtonEn = {"SerialPortButton_Idle_EN.png", "SerialPortButton_Hover_EN.png", "SerialPortButton_Pressed_EN.png"};
 String[] imgsAddButton = {"ADD.png", "ADD_Hover.png", "ADD_Pressed.png"};
 String[] imgsRemoveButton = {"REMOVE.png", "REMOVE_Hover.png", "REMOVE_Pressed.png"};
 String[] imgsUpButton = {"UP_Index.png", "UP_Index_Hover.png", "UP_Index_Pressed.png"};
@@ -40,18 +41,20 @@ float xItems = 75;
 float yItems = 160;
 OscMessage[] OSCMessages = new OscMessage[10];
 String estadoMind = "Desconectado";
+String MindStatus = "Disconnected";
 color[] colorsStatus = {color(150), color(255, 0, 0), color(0, 200, 0), color(50)};
 int indexColorsStatus;
-PImage alert, alertPort;
+PImage alert, alertPort, alertEn, alertPortEn;
 boolean isAlertPort, isTryGetConnection, changeStatus;
 
-String [] direcciones = {"/mindAtencion", "/mindMeditacion", "/mindDelta", "/mindTheta", "/mindLowAlpha", "/mindHighAlpha", "/mindLowBeta", "/mindHighBeta", "/mindLowGamma", "/mindMidGamma"};
+String [] direcciones = {"/mindAttention", "/mindMeditation", "/mindDelta", "/mindTheta", "/mindLowAlpha", "/mindHighAlpha", "/mindLowBeta", "/mindHighBeta", "/mindLowGamma", "/mindMidGamma"};
 
 PFont robotoRegular, robotoBold;
 
 PImage background, splash;
 boolean isAppInit;
 boolean isSimulation, isChangeStatusSimulation;
+boolean inEnglish, currentLanguage;
 
 JSONObject json;
 JSONArray ja, ja2;
@@ -65,6 +68,8 @@ void setup() {
   background = loadImage("Home.png");
   alert = loadImage("Alert.png");
   alertPort = loadImage("AlertPort.png");
+  alertEn = loadImage("Alert_EN.png");
+  alertPortEn = loadImage("AlertPort_EN.png");
   splash = loadImage("Splash.png");
 
   //========== Load/Create Json file ===========
@@ -72,6 +77,8 @@ void setup() {
     json = loadJSONObject("data.json");
 
     serialPort = json.getString("portSerial");
+    inEnglish = json.getBoolean("inEnglish");
+    currentLanguage = inEnglish;
 
     ja = json.getJSONArray("osc");
     JSONObject item = ja.getJSONObject(0);
@@ -107,6 +114,10 @@ void setup() {
     json = new JSONObject();
 
     json.setString("portSerial", " ");
+
+    inEnglish = System.getProperty("user.language") == "es" ? false : true;
+    currentLanguage = inEnglish;
+    json.setBoolean("inEnglish", inEnglish);
 
     ja = new JSONArray();
     JSONObject j = new JSONObject();
@@ -166,6 +177,7 @@ void draw() {
     Osc();
     OSCButtonsStatus();
     simulate(); //Simulation Sensor's Values
+    changeLanguage();
 
     CustomOSCAddresses();
   } else {

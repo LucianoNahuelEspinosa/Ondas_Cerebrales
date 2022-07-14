@@ -5,9 +5,11 @@ void GetConnection() {
       mindSet = new MindSet(this, serialPort);
       changeStatus = false;
       estadoMind = "Conectado";
+      MindStatus = "Connected";
     } 
     catch (Exception e) {
       estadoMind = "Error al conectar";
+      MindStatus = "Error connecting";
     }
 
     isTryGetConnection = false;
@@ -44,6 +46,7 @@ void CheckStatusConnection() {
     if (changeStatus && estadoMind == "Conectado") {
       if (frameCount % 600 == 0 && attention == attenBefore && meditation == mediBefore && mindWaveFrequencies[i] ==  mindWaveFrequenciesBefore[i]) {
         estadoMind = "Desconectado";
+        MindStatus = "Disconnected";
         mindSet.quit();
       }
     }

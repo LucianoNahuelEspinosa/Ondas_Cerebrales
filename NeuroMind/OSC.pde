@@ -25,6 +25,7 @@ void ChangeOSCSend() {
     serialPort = serialPortText.getText();
     oscIP = ipText.getText();
     sendPort = int(portText.getText());
+    currentLanguage = inEnglish;
 
     if (sendPort > 1 && sendPort <= 65535) {
       remoteLocations.set(idIndexJSON, new NetAddress(oscIP, sendPort));
@@ -33,6 +34,7 @@ void ChangeOSCSend() {
     }
 
     json.setString("portSerial", serialPort);
+    json.setBoolean("inEnglish", inEnglish);
 
     JSONObject j = new JSONObject();
     j.setInt("id", idIndexJSON);

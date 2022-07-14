@@ -2,6 +2,14 @@
 void Splash() {
   image(splash, 0, 0);
 
+  pushStyle();
+  textAlign(RIGHT, BASELINE);
+  fill(255);
+  textSize(12);
+  textFont(robotoRegular);
+  text("Version 1.2", width - 50, height - 15);
+  popStyle();
+
   if (frameCount % 180 == 0) {
     isAppInit = true;
   }
@@ -16,22 +24,22 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignatio
   fill(colorFill);
   textAlign(CENTER);
   text("MindWave Sensor", width/2-250, 80);
-  text("Conexión OSC", width-275, 80);
+  text(inEnglish ? "OSC Connection" : "Conexión OSC", width-275, 80);
 
   textFont(robotoRegular);
   textAlign(BASELINE);
   textSize(tamInfo);
-  text("Puerto Serial (Saliente): ", xItems, yItems - 35);
+  text(inEnglish ? "Serial Port (Outgoing): " : "Puerto Serial (Saliente): ", xItems, yItems - 35);
 
   pushStyle();
   fill(colorsStatus[indexColorsStatus]);
-  text("Estado conexión: " + estadoMind, xItems, yItems);
+  text(inEnglish ? "Connection Status: " + MindStatus : "Estado conexión: " + estadoMind, xItems, yItems);
   popStyle();
 
-  text("Nivel de Atencion: " + attention, xItems, yItems + 50);
+  text(inEnglish ? "Attention Level: " + attention : "Nivel de Atencion: " + attention, xItems, yItems + 50);
   attentionWidget.draw(xItems + 250, yItems + 25, 300, 25);
 
-  text("Nivel de Meditacion: " + meditation, xItems, yItems + 100);
+  text(inEnglish ? "Meditation Level: " + meditation : "Nivel de Meditacion: " + meditation, xItems, yItems + 100);
   meditationWidget.draw(xItems + 250, yItems + 75, 300, 25);
 
   text("Delta: " + mindWaveFrequencies[0], xItems, yItems + 150);
@@ -51,8 +59,8 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignatio
   text("Mid Gamma: " + mindWaveFrequencies[7], xItems, yItems + 500);
   mindWaveFrequenciesWidget[7].draw(xItems + 250, yItems + 475, 300, 25);
 
-  text("Dirección IP: ", width/2+xItems+75, yItems-30);
-  text("Puerto a enviar: ", width/2+xItems+75, yItems-30+50);
+  text(inEnglish ? "IP Address: " : "Dirección IP: ", width/2+xItems+75, yItems-30);
+  text(inEnglish ? "Send to port: " : "Puerto a enviar: ", width/2+xItems+75, yItems-30+50);
 
   rectMode(CENTER);
   fill(255);
@@ -64,7 +72,7 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignatio
 
   textSize(tamTitle);
   textFont(robotoBold);
-  text("Direcciones OSC", width-275, yItems+160);
+  text(inEnglish ? "OSC Addresses" : "Direcciones OSC", width-275, yItems+160);
 
   textFont(robotoRegular);
   textAlign(BASELINE);
@@ -80,15 +88,30 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignatio
   textAlign(RIGHT, BASELINE);
   fill(255);
   textSize(tamKeyAssignation);
-  text("(R) Restaurar valores predeterminados  (S) Simulación   (O) Opciones direcciones OSC personalizadas", width - 50, height - 15);
+  text(inEnglish ? "(R) Restore default values  (S) Simulate   (O) Options custom OSC Addresses  (E) Español" : "(R) Restaurar valores predeterminados  (S) Simulación   (O) Opciones direcciones OSC personalizadas  (E) English", width - 50, height - 15);
   popStyle();
 
-  if (serialPort != serialPortText.getText() || oscIP != ipText.getText() || sendPort != int(portText.getText())) {
-    image(alert, width/2-alert.width/2, 10);
+  if (serialPort != serialPortText.getText() || oscIP != ipText.getText() || sendPort != int(portText.getText()) || currentLanguage != inEnglish) {
+    image(inEnglish ? alertEn : alert, width/2-alert.width/2, 10);
   }
 
   if (isAlertPort) {
-    image(alertPort, width/2-alertPort.width/2, height/2-alertPort.height/2);
+    image(inEnglish ? alertPortEn : alertPort, width/2-alertPort.width/2, height/2-alertPort.height/2);
   }
 }
 //===================================================
+
+void changeLanguage() {
+  if (keyPressed) {
+    if (key == 'e') {
+      inEnglish = !inEnglish;
+      keyPressed = false;
+    }
+  }
+
+  if (ipText != null && portText != null && serialPortText != null) {
+    ipText.setPromptText(inEnglish ? "IP Address" : "Direccion IP");
+    portText.setPromptText(inEnglish ? "Port" : "Puerto");
+    serialPortText.setPromptText(inEnglish ? "Serial Port" : "Puerto Serial");
+  }
+}
