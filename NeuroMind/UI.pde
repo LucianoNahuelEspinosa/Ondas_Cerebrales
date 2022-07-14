@@ -12,11 +12,13 @@ void Splash() {
 void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignation, color colorFill) {
   pushStyle();
   textSize(tamTitle);
+  textFont(robotoBold);
   fill(colorFill);
   textAlign(CENTER);
   text("MindWave Sensor", width/2-250, 80);
   text("Conexión OSC", width-275, 80);
 
+  textFont(robotoRegular);
   textAlign(BASELINE);
   textSize(tamInfo);
   text("Puerto Serial (Saliente): ", xItems, yItems - 35);
@@ -61,9 +63,10 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignatio
   text(idIndexJSON, width-xItems-105, yItems-5);
 
   textSize(tamTitle);
-
+  textFont(robotoBold);
   text("Direcciones OSC", width-275, yItems+160);
 
+  textFont(robotoRegular);
   textAlign(BASELINE);
   textSize(tamAddresses);
   for ( int i = 0; i<5; i++ ) {

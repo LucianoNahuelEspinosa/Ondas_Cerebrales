@@ -88,6 +88,14 @@ public void eegEvent(int delta, int theta, int low_alpha,
   mindWaveFrequenciesWidget[7].add(mid_gamma);
 }
 
+public void blinkEvent(int blink) {
+  //println(blink);
+}
+
+public void rawEvent(int[] raw) {
+  //println(raw);
+}
+
 void simulate() {
   if (keyPressed) {
     if (key == 's' && !isChangeStatusSimulation && !inFocusInput) {
@@ -100,7 +108,6 @@ void simulate() {
 
   if (isSimulation) {
     if (frameCount % 60 == 0) {
-      //poorSignalEvent(int(random(200)));
       attentionEvent(int(random(100)));
       meditationEvent(int(random(100)));
       eegEvent(int(random(1000)), int(random(1000)), int(random(1000)), 

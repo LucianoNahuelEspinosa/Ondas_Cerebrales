@@ -47,6 +47,8 @@ boolean isAlertPort, isTryGetConnection, changeStatus;
 
 String [] direcciones = {"/mindAtencion", "/mindMeditacion", "/mindDelta", "/mindTheta", "/mindLowAlpha", "/mindHighAlpha", "/mindLowBeta", "/mindHighBeta", "/mindLowGamma", "/mindMidGamma"};
 
+PFont robotoRegular, robotoBold;
+
 PImage background, splash;
 boolean isAppInit;
 boolean isSimulation, isChangeStatusSimulation;
@@ -65,6 +67,7 @@ void setup() {
   alertPort = loadImage("AlertPort.png");
   splash = loadImage("Splash.png");
 
+  //========== Load/Create Json file ===========
   try {
     json = loadJSONObject("data.json");
 
@@ -134,6 +137,7 @@ void setup() {
 
     remoteLocations.add(new NetAddress("127.0.0.1", 7000));
   }
+  //============================================
 
   attentionWidget = new SampleWidget(100, true, 100);
   meditationWidget = new SampleWidget(100, true, 100);
@@ -141,6 +145,9 @@ void setup() {
   for (int i = 0; i<mindWaveFrequenciesWidget.length; i++) {
     mindWaveFrequenciesWidget[i] = new SampleWidget(100, true, 1000);
   }
+
+  robotoRegular = createFont("Roboto-Regular.ttf", 14);
+  robotoBold = createFont("Roboto-Regular.ttf", 24);
 
   oscP5 = new OscP5(this, 1);
 }

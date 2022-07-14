@@ -63,6 +63,7 @@ void PopUpCustomOSCAddresses() {
   fill(242);
   rect(width/2, height/2, width/2, height/2-175, 25);
 
+  textFont(robotoBold);
   textAlign(CENTER);
   fill(0);
   textSize(16);
@@ -74,14 +75,18 @@ void PopUpCustomOSCAddresses() {
     showHideInputsPopUp(true);
   }
 
+  textFont(robotoRegular);
   fill(255);
   rect(width/2+160, height/2+heightInputs+10, 30, 30);
   textSize(14);
   fill(0);
   text(indexOSCAddresses, width/2+160, height/2+heightInputs+15);
 
+  textFont(robotoBold);
+  textSize(14);
   text("¿Se tiene que mapear los valores?", width/2-125, height/2+heightInputs+60);
 
+  textFont(robotoRegular);
   if (changeOption) {
     fromMapInput.setVisible(true);
     toMapInput.setVisible(true);
@@ -120,19 +125,28 @@ void createInputsPopUp() {
   addressInput.setPromptText("Direccion OSC");
   addressInput.setText(currentAddress);
 
-  dropdownSensorValues = new GDropList(this, width/2-25, height/2+heightInputs+2, 75, 75);
+  dropdownSensorValues = new GDropList(this, width/2-25, height/2+heightInputs, 75, 100);
   for (int i = 0; i<dropdownItems.length; i++) {
     dropdownSensorValues.insertItem(i, dropdownItems[i]);
   }
   dropdownSensorValues.setSelected(indexDropdown);
+  dropdownSensorValues.setLocalColorScheme(6);
+  dropdownSensorValues.setLocalColor(5, 255);
+  dropdownSensorValues.setLocalColor(6, 255);
 
   addOSCAddressBtn = new GImageButton(this, width/2+225, height/2+heightInputs, 21, 21, imgsAddButton);
   removeOSCAddressBtn = new GImageButton(this, width/2+75, height/2+heightInputs, 21, 21, imgsRemoveButton);
   upIndexAddressBtn = new GImageButton(this, width/2+200, height/2+heightInputs, 21, 21, imgsUpButton);
   downIndexAddressBtn = new GImageButton(this, width/2+100, height/2+heightInputs, 21, 21, imgsDownButton);
 
+  GAnimIcon ico = new GAnimIcon(this, "RadioInputs.png", 2, 2, 300);
+  ico.storeAnim("SELECT", 2, 2, 300, 1);
+  ico.storeAnim("DESELECT", 0, 0, 300, 1);
+
   optionNo = new GOption(this, width/2-75, height/2+heightInputs+75, 40, 30, "No");
+  optionNo.setIcon(ico, GAlign.WEST, GAlign.CENTER, GAlign.MIDDLE);
   optionYes = new GOption(this, width/2-25, height/2+heightInputs+75, 40, 30, "Si");
+  optionYes.setIcon(ico, GAlign.WEST, GAlign.CENTER, GAlign.MIDDLE);
 
   optionGroup = new GToggleGroup();
   optionGroup.addControls(optionNo, optionYes);
@@ -145,13 +159,13 @@ void createInputsPopUp() {
     optionYes.setSelected(false);
   }
 
-  fromMapInput = new GTextField(this, width/2+75, height/2+heightInputs+78, 30, 20);
+  fromMapInput = new GTextField(this, width/2+75, height/2+heightInputs+80, 30, 15);
   fromMapInput.tag = "fromMapInput";
   fromMapInput.setPromptText("Desde");
   fromMapInput.setText(str(currentFromMap));
   fromMapInput.setNumericType(G4P.DECIMAL);
 
-  toMapInput = new GTextField(this, width/2+175, height/2+heightInputs+78, 30, 20);
+  toMapInput = new GTextField(this, width/2+175, height/2+heightInputs+80, 30, 15);
   toMapInput.tag = "toMapInput";
   toMapInput.setPromptText("Hasta");
   toMapInput.setText(str(currentToMap));
