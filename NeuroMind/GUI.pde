@@ -1,6 +1,6 @@
 //============= Setup GUI ================
 void InitGUI() {
-  ipText = new GTextField(this, width/2+xItems+175, yItems-45, 80, 20);
+  ipText = new GTextField(this, width/2+xItems+175, yItems-45, 90, 20);
   ipText.tag = "IpAddress";
   ipText.setPromptText(inEnglish ? "IP Address" : "Direccion IP");
   ipText.setText(oscIP);

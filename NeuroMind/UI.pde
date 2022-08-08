@@ -103,7 +103,7 @@ void infoMind (int tamTitle, int tamInfo, int tamAddresses, int tamKeyAssignatio
 
 void changeLanguage() {
   if (keyPressed) {
-    if (key == 'e') {
+    if (key == 'e' && !inFocusInput) {
       inEnglish = !inEnglish;
       keyPressed = false;
     }
