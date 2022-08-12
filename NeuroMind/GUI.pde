@@ -153,6 +153,7 @@ void handleButtonEvents(GImageButton button, GEvent event) {
     dropdownSensorValues.setSelected(0);
     optionNo.setSelected(true);
     optionYes.setSelected(false);
+    changeOption = false;
     fromMapInput.setText("0.0");
     toMapInput.setText("0.0");
 
